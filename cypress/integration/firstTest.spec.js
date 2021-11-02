@@ -3,18 +3,20 @@
 // npm install
 // npm start
 
-// const { isContext } = require("vm");
-
 // https://docs.cypress.io/guides/getting-started/installing-cypress
 // npm install cypress --save-dev
 // npx cypress open
 
+// git init (if you need to create project)
 // git config --global user.name "Your Name"
 // git config --global user.email "yourname@example.com"
 // git config --global init.defaultBranch main
 // git config --global color.ui auto
 // git config --get user.name
 // git config --get user.email
+// git config --list
+// git config --list --global
+// cat ~/.gitconfig
 
 // ls ~/.ssh/id_rsa.pub
 // ssh-keygen -C <youremail>
@@ -25,6 +27,7 @@
 // git add .
 // git status
 // git commit -m "test: add cypress e2e testing framework"
+// -m means message
 
 // redefine the origin remote to be associated with your fork, by running:
 // git remote set-url origin https://github.com/Nodosy/ngx-cypress-test
@@ -52,7 +55,7 @@
 // describe("Our first suite", () => {
 //     describe("Our suite section", () => {
 //         beforeEach("code for every test", () => {
-
+                // repetetive code
 //         })
 //         it("some test name", () => {
 
@@ -67,13 +70,14 @@
 //     it("first test", () => {
 
 //     })
-//     t("first test", () => {
+//     it("second test", () => {
         
 //     })
-//     it("first test", () => {
+//     it("third test", () => {
             
 //     })
 // });
+
 describe("Our first suite", () => {
     
     it("first test", () => {
@@ -116,7 +120,7 @@ describe("Our first suite", () => {
         cy.get('input[placeholder="Email"]#inputEmail.input-full-width')
 
         // the most recommended way by cypress is to create your own
-        cy.get('[data-cy="imputEmail1"]')
+        cy.get('[data-cy="inputEmail1"]')
     })
 
     it('second test', () => {
@@ -131,6 +135,29 @@ describe("Our first suite", () => {
         cy.get('#inputEmail3').parents('form').find('button').should('contain', 'Sign in').parents('form').find('nb-checkbox').click()
 
         cy.contains('nb-card', 'Horizontal form').find('[type="email"]')
+
+        // selector-attribute:
+        // p[lang] {
+		// 	background-color: orange;
+		// }
+		// p[lang="fr"] { /* exact value */
+		// 	background-color: blue;
+		// }
+		// p[lang^="ge"] { /* value begins with prefix */
+		// 	background-color: red;
+		// }
+		// p[lang$="g"] { /* value ends with sufix */
+		// 	background-color: yellow;
+		// }
+		// p[lang*="w"] { /* value contains */
+		// 	background-color: brown;
+		// }
+		// p[lang*="w" i] { /* value contains default, lowercase, uppercase */
+		// 	background-color: brown;
+		// }
+		// p[lang~="en-us"] { /* specific value in list */
+		// 	color: red;
+		// }
     })
 
     it('then and wrap methods', () => {
