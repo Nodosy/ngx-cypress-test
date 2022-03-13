@@ -44,6 +44,7 @@
 
 // https://docs.cypress.io/guides/getting-started/installing-cypress
 // https://docs.cypress.io/guides/references/configuration
+// https://globster.xyz/
 // cypress.json
 // {
 //     "baseUrl": "https://localhost:4200",
@@ -138,6 +139,7 @@ describe("Our first suite", () => {
     cy.contains("Form Layouts").click();
 
     // თუ ბევრი ელემენტია, მოძებნის სპეციფიკურს, თუ უნიკალური იდენტიფიაკტორი გააჩნია.
+    // .contains(selector, content)
     cy.contains('[status="warning"]', "Sign in");
 
     // https://docs.cypress.io/guides/references/error-messages#cy-failed-because-the-element-cannot-be-interacted-with
@@ -149,6 +151,7 @@ describe("Our first suite", () => {
       .find("nb-checkbox")
       .click();
     // parent ეძებს ერთი საფეხურით მაღლა, ხოლო parents ადის ბოლომდე სანამ არ იპოვის
+    // .find() ელემენტის შთამომავალს პოულობს
 
     cy.contains("nb-card", "Horizontal form").find('[type="email"]');
 
@@ -187,6 +190,7 @@ describe("Our first suite", () => {
     // .rightclick() - Right-click a DOM element.
   });
 
+  // 🔥🔥🔥
   it("then and wrap methods", () => {
     cy.visit("/");
     cy.contains("Forms").click();
@@ -198,13 +202,16 @@ describe("Our first suite", () => {
     // cy.contains('nb-card', 'Basic form').find('[for=exampleInputEmail1]').should('contain', 'Email address')
     // cy.contains('nb-card', 'Basic form').find('[for=exampleInputPassword1]').should('contain', 'Password')
 
+    // სელენიუმისმაგვარის დროს იქნებოდა ასე:
+    // const firstForm = cy.contains('nb-card', 'Using the Grid');
+    // მაგრამ აქ ასე არ შეიძლება და უნდა იყოს ასე:
     cy.contains("nb-card", "Using the Grid").then((firstForm) => {
       const emailLabelFirst = firstForm.find("[for=inputEmail1]").text();
       const passwordLabelFirst = firstForm.find("[for=inputPassword2]").text();
       expect(emailLabelFirst).to.equal("Email");
       expect(passwordLabelFirst).to.equal("Password");
 
-      // saved to jquery object and then using jquery methods and chai assortions
+      // after using "then" object is saved to jquery object and then using jquery methods and chai assortions
       // cypress asynchronous
       cy.contains("nb-card", "Basic form").then((secondForm) => {
         const passwordLabelSecondText = secondForm
@@ -220,6 +227,7 @@ describe("Our first suite", () => {
     });
   });
 
+  // 🔥🔥🔥
   it("invoke command", () => {
     // how to get text value
     // how to get attribute value
@@ -236,14 +244,14 @@ describe("Our first suite", () => {
       expect(label.text()).to.equal("Email address");
     });
 
-    // 3 cypress way
+    // 3 cypress way, variant 1
     cy.get('[for="exampleInputEmail1"]')
       .invoke("text")
       .then((text) => {
         expect(text.to.equal("Email address"));
       });
 
-    // variant 1
+    // variant 2
     cy.contains("nb-card", "Basic form")
       .find("nb-checkbox")
       .click()
@@ -251,7 +259,7 @@ describe("Our first suite", () => {
       .invoke("attr", "class")
       .should("contain", "checked");
 
-    // or variant 2
+    // or variant 3
     cy.contains("nb-card", "Basic form")
       .find("nb-checkbox")
       .click()
@@ -262,6 +270,7 @@ describe("Our first suite", () => {
       });
   });
 
+  // invoke variant 4
   it("assert property", () => {
     cy.visit("/");
     cy.contains("Forms").click();
@@ -278,6 +287,8 @@ describe("Our first suite", () => {
       });
   });
 
+  // 🔥🔥🔥
+  // checkboxes and radio buttons
   it("radio button", () => {
     cy.visit("/");
     cy.contains("Forms").click();
