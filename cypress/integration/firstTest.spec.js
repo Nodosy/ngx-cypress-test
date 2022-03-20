@@ -280,10 +280,14 @@ describe("Our first suite", () => {
       .find("input")
       .then((input) => {
         cy.wrap(input).click();
+        // 🔥
+        let dateAssert = selectDayFromCurrent(2);
         cy.get("nb-calendar-day-picker").contains("17").click();
         cy.wrap(input)
           .invoke("prop", "value")
           .should("contain", "Aug 17, 2021");
+        // 🔥
+        cy.wrap(input).should("have.value", dateAssert);
       });
   });
 
@@ -311,7 +315,7 @@ describe("Our first suite", () => {
       });
   });
 
-  it.only("checkbox", () => {
+  it("checkbox", () => {
     cy.visit("/");
     cy.contains("Modal & Overlays").click();
     cy.contains("Toastr").click();
@@ -320,4 +324,234 @@ describe("Our first suite", () => {
     cy.get('[type="checkbox"]').eq(0).click({ force: true });
     cy.get('[type="checkbox"]').eq(1).check({ force: true });
   });
+
+  // 🔥🔥🔥
+  // dropdown and lists
+  it("lists and dropdown", () => {
+    cy.visit("/");
+
+    // cy.get("nb-layout-header nb-select").click();
+    // cy.get("[ng-reflect-value='dark']").click();
+
+    // cy.get("nav nb-select").click();
+    // cy.get(".options-list").contains("Dark").click();
+    // cy.get("nav nb-select").should("contain", "Dark");
+    // cy.get("nb-layout-header nav").should(
+    //   "have.css",
+    //   "background-color",
+    //   "rgb(34, 43, 69)"
+    // );
+
+    cy.get("nav nb-select").then((dropdown) => {
+      cy.wrap(dropdown).click();
+      cy.get(".options-list nb-option").each((listItem, index) => {
+        const itemText = listItem.text().trim();
+
+        const colors = {
+          Light: "rgb(255, 255, 255)",
+          Dark: "rgb(34, 43, 69)",
+          Cosmic: "rgb(50, 50, 80)",
+          Corporate: "rgb(255, 255, 255)",
+        };
+
+        cy.wrap(listItem).click();
+        cy.wrap(dropdown).should("contain", itemText);
+        cy.get("nb-layout-header nav").should(
+          "have.css",
+          "background-color",
+          colors[itemText]
+        );
+        if (index < 3) {
+          cy.wrap(dropdown).click();
+        }
+      });
+
+      // nned to check out: https://docs.cypress.io/api/commands/select
+
+      // https://docs.cypress.io/guides/references/assertions
+    });
+  });
+
+  // 🔥🔥🔥
+  // web tables
+  it("web tables", () => {
+    cy.visit("/");
+    cy.contains("Tables & Data").click();
+    cy.contains("Smart Table").click();
+
+    // 1
+    cy.get("tbody")
+      .contains("tr", "Larry")
+      .then((tableRow) => {
+        cy.wrap(tableRow).find(".nb-edit").click();
+        cy.wrap(tableRow).find("[placeholder='Age']").clear().type("25");
+        cy.wrap(tableRow).find(".nb-checkmark").click();
+        cy.wrap(tableRow).find("td").eq(6).should("contain", "25");
+      });
+
+    // 2
+    cy.get("thead").find(".nb-plus").click();
+    cy.get("thead")
+      .find("tr")
+      .eq(2)
+      .then((tableRow) => {
+        cy.wrap(tableRow).find("[placeholder='First Name']").type("Artem");
+        cy.wrap(tableRow).find("[placeholder='Last Name']").type("Bondar");
+        cy.wrap(tableRow).find(".nb-checkmark").click();
+      });
+    cy.get("tbody tr")
+      .first()
+      .find("td")
+      .then((tableColumns) => {
+        cy.wrap(tableColumns).eq(2).should("contain", "Artem");
+        cy.wrap(tableColumns).eq(3).should("contain", "Bondar");
+      });
+
+    // 3
+    cy.get("thead [placeholder='Age']").type("20");
+    cy.wait(500);
+    cy.get("tbody tr").each((tableRow) => {
+      cy.wrap(tableRow).find("td").eq(6).should("contain", 20);
+    });
+
+    const ages = [20, 30, 40];
+    cy.wrap(ages).each((age) => {
+      cy.get("thead [placeholder='Age']").clear().type(age);
+      cy.wait(500);
+      cy.get("tbody tr").each((tableRow) => {
+        cy.wrap(tableRow).find("td").eq(6).should("contain", age);
+      });
+    });
+
+    const ages_2 = [20, 30, 40, 200];
+    cy.wrap(ages_2).each((age) => {
+      cy.get("thead [placeholder='Age']").clear().type(age);
+      cy.wait(500);
+      cy.get("tbody tr").each((tableRow) => {
+        if (age === 200) {
+          cy.wrap(tableRow).should("contain", "No data found");
+        } else {
+          cy.wrap(tableRow).find("td").eq(6).should("contain", age);
+        }
+      });
+    });
+  });
+
+  // 🔥🔥🔥
+  it.only("datepicker", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Datepicker").click();
+
+    function selectDayFromCurrent(day) {
+      let date = new Date();
+      date.setDate(date.getDate() + day);
+      let futureDay = date.getDate();
+      let futureMonth = date.toLocaleString("default", { month: "short" });
+      let dateAssert =
+        futureMonth + " " + futureDay + ", " + date.getFullYear();
+
+      cy.get("nb-calendar-navigation")
+        .invoke("attr", "ng-reflect-date")
+        .then((dateAttribute) => {
+          if (!dateAttribute.includes(futureMonth)) {
+            cy.get("[data-name='chevron-right']").click();
+            selectDayFromCurrent(day);
+          } else {
+            cy.get("nb-calendar-day-picker [class='day-cell ng-star-inserted']")
+              .contains(futureDay)
+              .click();
+          }
+        });
+      return dateAssert;
+    }
+
+    cy.contains("nb-card", "Common Datepicker")
+      .find("input")
+      .then((input) => {
+        cy.wrap(input).click();
+
+        let dateAssert = selectDayFromCurrent(300);
+        cy.wrap(input).invoke("prop", "value").should("contain", dateAssert);
+      });
+  });
+  // it.only("datepicker", () => {
+  //   cy.visit("/");
+  //   cy.contains("Forms").click();
+  //   cy.contains("Datepicker").click();
+
+  //   let date = new Date();
+  //   date.setDate(date.getDate() + 40);
+  //   let futureDay = date.getDate();
+  //   let futureMonth = date.toLocaleString("default", { month: "short" });
+  //   let dateAssert = futureMonth + " " + futureDay + ", " + date.getFullYear();
+
+  //   cy.contains("nb-card", "Common Datepicker")
+  //     .find("input")
+  //     .then((input) => {
+  //       cy.wrap(input).click();
+  //       function selectDayFromCurrent() {
+  //         cy.get("nb-calendar-navigation")
+  //           .invoke("attr", "ng-reflect-date")
+  //           .then((dateAttribute) => {
+  //             if (!dateAttribute.includes(futureMonth)) {
+  //               cy.get("[data-name='chevron-right']").click();
+  //               selectDayFromCurrent();
+  //             } else {
+  //               cy.get(
+  //                 "nb-calendar-day-picker [class='day-cell ng-star-inserted']"
+  //               )
+  //                 .contains(futureDay)
+  //                 .click();
+  //             }
+  //           });
+  //       }
+  //       selectDayFromCurrent();
+  //       cy.wrap(input).invoke("prop", "value").should("contain", dateAssert);
+  //     });
+  // });
+
+  // 🔥🔥🔥
+  // Popups and Tooltips
+  it.only("tooltip", () => {
+    cy.visit("/");
+    cy.contains("Modal & Overlays").click();
+    cy.contains("Tooltip").click();
+
+    cy.contains("nb-card", "Colored Tooltips").contains("Default").click();
+    cy.get("nb-tooltip").should("contain", "This is a tooltip");
+  });
+  it("dialog box", () => {
+    cy.visit("/");
+    cy.contains("Tables and Data").click();
+    cy.contains("Smart Table").click();
+
+    // #1
+    cy.get("tbody tr").first().find(".nb-trash").click();
+    cy.on("window:confirm", (confirm) => {
+      expect(confirm).text.equal("Are you sure you want to delete?");
+    });
+    // #2
+    const stub = cy.stub();
+    cy.on("window:confirm", stub);
+    cy.get("tbody tr")
+      .first()
+      .find(".nb-trash")
+      .click()
+      .then(() => {
+        expect(stub.getCall(0)).to.be.calledWith(
+          "Are you sure you want to delete?"
+        );
+      });
+  });
+  // 🔥🔥🔥
+  // https://docs.cypress.io/guides/references/assertions
+
+  // 🔥🔥🔥
+  // page object model
+
+  // 🔥🔥🔥
+  // commands.js
+  // to use across all your tests
+  // https://docs.cypress.io/api/cypress-api/custom-commands
 });
