@@ -237,18 +237,23 @@ describe("Our first suite", () => {
     cy.contains("Form Layouts").click();
 
     // 1
-    cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
+    cy.get('[for="exampleInputEmail1"]')
+      .should("contain", "Email address")
+      .should("have.class", "label")
+      .and("have.text", "Email address");
 
     // 2 jquery way
     cy.get('[for="exampleInputEmail1"]').then((label) => {
       expect(label.text()).to.equal("Email address");
+      expect(label).to.have.class("label");
+      expect(label).to.have.text("Email address");
     });
 
     // 3 cypress way, variant 1
     cy.get('[for="exampleInputEmail1"]')
       .invoke("text")
       .then((text) => {
-        expect(text.to.equal("Email address"));
+        expect(text).to.equal("Email address");
       });
 
     // variant 2
@@ -266,12 +271,35 @@ describe("Our first suite", () => {
       .find(".custom-checkbox")
       .invoke("attr", "class")
       .then((className) => {
-        expect(className.to.contain("checkbox"));
+        expect(className).to.contain("checkbox");
       });
   });
 
   // invoke variant 4
   it("assert property", () => {
+    function selectDayFromCurrent(day) {
+      let date = new Date();
+      date.setDate(date.getDate() + day);
+      let futureDay = date.getDate();
+      let futureMonth = date.toLocaleString("default", { month: "short" });
+      let dateAssert =
+        futureMonth + " " + futureDay + ", " + date.getFullYear();
+
+      cy.get("nb-calendar-navigation")
+        .invoke("attr", "ng-reflect-date")
+        .then((dateAttribute) => {
+          if (!dateAttribute.includes(futureMonth)) {
+            cy.get("[data-name='chevron-right']").click();
+            selectDayFromCurrent(day);
+          } else {
+            cy.get("nb-calendar-day-picker [class='day-cell ng-star-inserted']")
+              .contains(futureDay)
+              .click();
+          }
+        });
+      return dateAssert;
+    }
+
     cy.visit("/");
     cy.contains("Forms").click();
     cy.contains("Datepicker").click();
@@ -281,11 +309,10 @@ describe("Our first suite", () => {
       .then((input) => {
         cy.wrap(input).click();
         // 🔥
+        // let dateAssert = selectDayFromCurrent(2);
         let dateAssert = selectDayFromCurrent(2);
-        cy.get("nb-calendar-day-picker").contains("17").click();
-        cy.wrap(input)
-          .invoke("prop", "value")
-          .should("contain", "Aug 17, 2021");
+        // cy.get("np-calendar-day-picker").contains("17").click();
+        cy.wrap(input).invoke("prop", "value").should("contain", dateAssert);
         // 🔥
         cy.wrap(input).should("have.value", dateAssert);
       });
@@ -350,7 +377,7 @@ describe("Our first suite", () => {
         const colors = {
           Light: "rgb(255, 255, 255)",
           Dark: "rgb(34, 43, 69)",
-          Cosmic: "rgb(50, 50, 80)",
+          Cosmic: "rgb(50, 50, 89)",
           Corporate: "rgb(255, 255, 255)",
         };
 
@@ -438,7 +465,7 @@ describe("Our first suite", () => {
   });
 
   // 🔥🔥🔥
-  it.only("datepicker", () => {
+  it("datepicker", () => {
     cy.visit("/");
     cy.contains("Forms").click();
     cy.contains("Datepicker").click();
@@ -473,6 +500,7 @@ describe("Our first suite", () => {
 
         let dateAssert = selectDayFromCurrent(300);
         cy.wrap(input).invoke("prop", "value").should("contain", dateAssert);
+        cy.wrap(input).should("have.value", dateAssert);
       });
   });
   // it.only("datepicker", () => {
@@ -513,7 +541,7 @@ describe("Our first suite", () => {
 
   // 🔥🔥🔥
   // Popups and Tooltips
-  it.only("tooltip", () => {
+  it("tooltip", () => {
     cy.visit("/");
     cy.contains("Modal & Overlays").click();
     cy.contains("Tooltip").click();
@@ -521,16 +549,16 @@ describe("Our first suite", () => {
     cy.contains("nb-card", "Colored Tooltips").contains("Default").click();
     cy.get("nb-tooltip").should("contain", "This is a tooltip");
   });
-  it("dialog box", () => {
+  it.only("dialog box", () => {
     cy.visit("/");
-    cy.contains("Tables and Data").click();
+    cy.contains("Tables & Data").click();
     cy.contains("Smart Table").click();
 
     // #1
-    cy.get("tbody tr").first().find(".nb-trash").click();
-    cy.on("window:confirm", (confirm) => {
-      expect(confirm).text.equal("Are you sure you want to delete?");
-    });
+    // cy.get("tbody tr").first().find(".nb-trash").click();
+    // cy.on("window:confirm", (confirm) => {
+    //   expect(confirm).text.equal("Are you sure you want to delete?");
+    // });
     // #2
     const stub = cy.stub();
     cy.on("window:confirm", stub);
