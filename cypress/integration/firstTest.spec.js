@@ -7,6 +7,27 @@
 // npm install cypress --save-dev
 // npx cypress open
 
+// d %HOMEPATH%
+// ssh-keygen -t ed25519 -C nodar.rusia@gmail.com
+// cat ~/.ssh/id_ed25519.pub
+
+// Commit Naming
+// Conventional Commits - https://www.conventionalcommits.org/en/v1.0.0-beta.2/#summary
+// feat: a commit of the type feat introduces a new feature to the codebase (MINOR in semantic versioning).
+// fix: a commit of the type fix patches a bug in your codebase (PATCH in semantic versioning).
+// docs: documentation update
+// refactor: refactoring codebase
+// perf: performance optimization
+// style: change formatting of the codebase
+// test: everything related to tests
+// build: everything related to build process, scripts, CI/CD
+// chore: everything else 🙂
+// Messages should be imperative: fix: update login button or chore: remove unused imports
+// Use closing issue keywords in commits, for example:
+// https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
+// fix: update login button position
+// close #11
+
 // git init (if you need to create project)
 // git config --global user.name "Your Name"
 // git config --global user.email "yourname@example.com"
@@ -133,7 +154,7 @@ describe("Our first suite", () => {
     cy.get('[data-cy="inputEmail1"]');
   });
 
-  it("second test", () => {
+  it.only("second test", () => {
     cy.visit("/");
     cy.contains("Forms").click();
     cy.contains("Form Layouts").click();
@@ -549,7 +570,7 @@ describe("Our first suite", () => {
     cy.contains("nb-card", "Colored Tooltips").contains("Default").click();
     cy.get("nb-tooltip").should("contain", "This is a tooltip");
   });
-  it.only("dialog box", () => {
+  it("dialog box", () => {
     cy.visit("/");
     cy.contains("Tables & Data").click();
     cy.contains("Smart Table").click();
@@ -582,4 +603,9 @@ describe("Our first suite", () => {
   // commands.js
   // to use across all your tests
   // https://docs.cypress.io/api/cypress-api/custom-commands
+});
+describe("pastebin suite", () => {
+  it("should open pastebin", () => {
+    cy.visit("https://pastebin.com/");
+  });
 });
