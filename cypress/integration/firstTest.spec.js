@@ -609,3 +609,42 @@ describe("pastebin suite", () => {
     cy.visit("https://pastebin.com/");
   });
 });
+
+// 🔥🔥🔥 Update All The Node.Js Dependencies To Their Latest Version
+
+// How Packages Become Dependencies
+
+// When you install a package using npm install <packagename>, the latest version is downloaded to the node_modules folder. A corresponding entry is added to package.json and package-lock.json in the current folder.
+
+// npm determines the dependencies and installs their latest versions as well.
+
+// Let's say you install cowsay, a nifty command-line tool that lets you make a cow say things.
+
+// When you run npm install cowsay, this entry is added to the package.json file:
+// JSON
+
+// Now those 2 files tell us that we installed version 1.3.1 of cowsay, and our npm versioning rule for updates is ^1.3.1. This means npm can update to patch and minor releases: 1.3.2, 1.4.0 and so on.
+
+// If there is a new minor or patch release and we type npm update, the installed version is updated, and the package-lock.json file diligently filled with the new version.
+
+// Use npm update --save to update package.json with newer minor or patch versions. Use npm update --no-save to prevent modifying package.json.
+
+// To discover new package releases, use npm outdated.
+
+// Here's the list of a few outdated packages in a repository:
+// picture.png
+
+// Some of those updates are major releases. Running npm update won't help here. Major releases are never updated in this way because they (by definition) introduce breaking changes, and npm wants to save you trouble.
+
+// Update All Packages to the Latest Version
+
+// Leveraging npm-check-updates, you can upgrade all package.json dependencies to the latest version.
+// https://www.npmjs.com/package/npm-check-updates
+
+// 1. Install the npm-check-updates package globally:
+// npm install -g npm-check-updates
+// 2. Now run npm-check-updates to upgrade all version hints in package.json, allowing installation of the new major versions:
+// ncu -u
+// npm update
+// 3. Finally, run a standard install:
+// npm install
