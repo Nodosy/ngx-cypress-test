@@ -29,10 +29,13 @@
 // close #11
 
 // git init (if you need to create project)
+// git clone git@example.git . თუ იმავე სახელწოდების ფოლდერში გვინდა დაკოპირება
 // git config --global user.name "Your Name"
 // git config --global user.email "yourname@example.com"
 // git config --global init.defaultBranch main
 // git config --global color.ui auto
+// git config --local user.name "name" თუ ლოკალურ ფოლდერში გვინდა განსაზღვრა
+// git config --local user.email "email" თუ ლოკალურ ფოლდერში გვინდა განსაზღვრა
 // git config --get user.name
 // git config --get user.email
 // git config --list
@@ -62,6 +65,8 @@
 // git branch -C new_branch
 // git checkout new_branch
 // git push origin HEAD to push the branch with same name
+
+// git pull --all ყველა ცვლილების გადმოქაჩვა
 
 // https://docs.cypress.io/guides/getting-started/installing-cypress
 // https://docs.cypress.io/guides/references/configuration
