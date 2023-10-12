@@ -8,7 +8,7 @@
 // npx cypress open
 
 // d %HOMEPATH%
-// ssh-keygen -t ed25519 -C nodar.rusia@gmail.com
+// ssh-keygen -t ed25519 -C mygmail
 // cat ~/.ssh/id_ed25519.pub
 
 // Commit Naming
@@ -648,6 +648,7 @@ describe("pastebin suite", () => {
 
 // 1. Install the npm-check-updates package globally:
 // npm install -g npm-check-updates
+// npx npm-check-updates
 // 2. Now run npm-check-updates to upgrade all version hints in package.json, allowing installation of the new major versions:
 // ncu -u
 // npm update
